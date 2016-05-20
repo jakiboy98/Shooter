@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Animation/explosion.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Animation/mineAnimation.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Animation/shipAnimation.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Font/gameFont.spritefont</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Sound/explosion.wav</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Sound/gameMusic.mp3</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Sound/laserFire.wav</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Sound/menuMusic.mp3</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Texture/bgLayer1.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Texture/bgLayer2.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Texture/endMenu.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Texture/laser.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Texture/mainMenu.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Texture/mainbackground.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Texture/mine.png</File>
+    <File>/Users/jwil9706/Projects/Shooter/Shooter/Content/Texture/player.png</File>
+  </SourceFiles>
+</SourceFileCollection>
