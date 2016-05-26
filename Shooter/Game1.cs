@@ -60,6 +60,11 @@ namespace Shooter
 		// The music played during gameplay
 		Song gameplayMusic;
 
+		//Number that holds the player score
+		int score;
+		// The font used to display UI elements
+		SpriteFont font;
+
 		// A random number generator
 		Random random;
 
@@ -69,6 +74,16 @@ namespace Shooter
 		// The rate of fire of the player laser
 		TimeSpan fireTime;
 		TimeSpan previousFireTime;
+
+		Texture2D LazorBeam;
+		LazorBeam lazorBeam;
+		List<LazorBeam> lazorBeams;
+
+		TimeSpan fireLazor;
+		TimeSpan previousLazorTime;
+
+		//New Weapons
+
 
 		public Game1 ()
 		{
@@ -114,7 +129,16 @@ namespace Shooter
 			// Set the laser to fire every quarter second
 			fireTime = TimeSpan.FromSeconds(.15f);
 
+			lazorBeams = new List<LazorBeam> ();
+
+			lazorBeam = new Shooter.LazorBeam();
+
+			fireLazor = TimeSpan.FromSeconds(3f);
+
 			explosions = new List<Animation>();
+
+			//Set player's score to zero
+			score = 0;
 
 			base.Initialize ();
 
@@ -148,6 +172,8 @@ namespace Shooter
 
 			projectileTexture = Content.Load<Texture2D>("Texture/laser");
 
+			LazorBeam = Content.Load<Texture2D> ("Animation/LazorBeam");
+
 			explosionTexture = Content.Load<Texture2D>("Animation/explosion");
 
 			// Load the music
@@ -160,6 +186,8 @@ namespace Shooter
 			// Start the music right away
 			PlayMusic(gameplayMusic);
 
+			// Load the score font
+			font = Content.Load<SpriteFont>("Font/gameFont");
 
 			mainBackground = Content.Load<Texture2D>("Texture/mainbackground");
 
@@ -204,6 +232,8 @@ namespace Shooter
 
 			// Update the projectiles
 			UpdateProjectiles();
+           
+			UpdateLazorBeam(gameTime);
 
 			// Update the explosions
 			UpdateExplosions(gameTime);
@@ -261,11 +291,22 @@ namespace Shooter
 				projectiles[i].Draw(spriteBatch);
 			}
 
+			for (int i = 0; i < lazorBeams.Count; i++) 
+			{
+				lazorBeams [i].Draw (spriteBatch);
+			}
+
 			// Draw the explosions
 			for (int i = 0; i < explosions.Count; i++)
 			{
 				explosions[i].Draw(spriteBatch);
 			}
+
+			// Draw the score
+			spriteBatch.DrawString(font, "score: " + score, new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y), Color.White);
+			// Draw the player health
+			spriteBatch.DrawString(font, "health: " + player.Health, new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 30), Color.White);
+
 
 			// Draw the Player
 			player.Draw(spriteBatch);
@@ -313,7 +354,7 @@ namespace Shooter
 			player.Position.Y = MathHelper.Clamp(player.Position.Y, 0,GraphicsDevice.Viewport.Height - player.Height);
 
 			// Fire only every interval we set as the fireTime
-			if (gameTime.TotalGameTime - previousFireTime > fireTime)
+			if (gameTime.TotalGameTime - previousFireTime > fireTime && currentKeyboardState.IsKeyDown(Keys.B))
 			{
 				// Reset our current time
 				previousFireTime = gameTime.TotalGameTime;
@@ -323,6 +364,20 @@ namespace Shooter
 
 				// Play the laser sound
 				laserSound.Play();
+			}
+
+			// reset score if player health goes to zero
+			if (player.Health <= 0)
+			{
+				player.Health = 100;
+				score = 0;
+			}
+
+			if (gameTime.TotalGameTime - previousLazorTime > fireLazor && currentKeyboardState.IsKeyDown(Keys.Space)) 
+			{
+				previousLazorTime = gameTime.TotalGameTime;
+
+				AddLazorBeam (player.Position + new Vector2 (player.Width / 2, 0));
 			}
 		}
 
@@ -374,6 +429,8 @@ namespace Shooter
 						// Play the explosion sound
 						explosionSound.Play();
 
+						//Add to the player's score
+						score += enemies[i].Value;
 					}
 
 					enemies.RemoveAt(i);
@@ -387,6 +444,7 @@ namespace Shooter
 			// determine if two objects are overlapping
 			Rectangle rectangle1;
 			Rectangle rectangle2;
+			Rectangle rectangle3;
 
 			// Only create the rectangle once for the player
 			rectangle1 = new Rectangle((int)player.Position.X,
@@ -418,7 +476,32 @@ namespace Shooter
 					if (player.Health <= 0)
 						player.Active = false; 
 				}
+			}
 
+
+			
+			// Lazor vs Enemy Collision
+			for (int i = 0; i < lazorBeams.Count; i++)
+			{
+				for (int j = 0; j < enemies.Count; j++) 
+				{
+					rectangle3 = new Rectangle ((int)lazorBeams[i].Position.X - lazorBeams[i].Width/2,
+						(int)lazorBeams[i].Position.Y - lazorBeams[i].Height/2,
+						lazorBeams[i].Width,
+						lazorBeams[i].Height);
+
+					rectangle2 = new Rectangle((int)enemies[j].Position.X - enemies[j].Width / 2,
+						(int)enemies[j].Position.Y - enemies[j].Height / 2,
+						enemies[j].Width, enemies[j].Height);
+
+					// Determine if the two objects collided with each
+					// other
+					if (rectangle3.Intersects (rectangle2)) 
+					{
+						enemies[j].Health -= lazorBeams[i].LazorDamage; 
+						lazorBeams [i].Active = false;
+					}
+				}
 			}
 
 			// Projectile vs Enemy Collision
@@ -478,6 +561,32 @@ namespace Shooter
 			}
 			catch { }
 		}
+
+		private void AddLazorBeam(Vector2 position)
+		{
+			Animation lazorBeamAnimation = new Animation();
+			Texture2D lazorBeamTexture = Content.Load<Texture2D>("Animation/LazorBeam");
+			lazorBeamAnimation.Initialize(lazorBeamTexture, position, 32, 32, 19, 30, Color.White, 1f, true);
+
+			LazorBeam lazorBeam = new LazorBeam();
+			lazorBeam.Initialize (lazorBeamAnimation, position);
+			lazorBeams.Add(lazorBeam);
+		}
+
+		private void UpdateLazorBeam(GameTime gameTime)
+			{
+			
+
+				// Update the Projectiles
+				for (int i = lazorBeams.Count - 1; i >= 0; i--) 
+				{
+				lazorBeams[i].Update(gameTime);
+					if (lazorBeams[i].Active == false)
+					{
+						lazorBeams.RemoveAt(i);
+					} 
+				}
+			}
 	}
 }
 

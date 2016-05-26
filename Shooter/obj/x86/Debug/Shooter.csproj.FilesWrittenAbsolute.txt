@@ -26,3 +26,4 @@
 /Users/jwil9706/Projects/Shooter/Shooter/bin/Debug/Shooter.exe
 /Users/jwil9706/Projects/Shooter/Shooter/obj/x86/Debug/Shooter.exe
 /Users/jwil9706/Projects/Shooter/Shooter/obj/x86/Debug/Shooter.exe.mdb
+/Users/jwil9706/Projects/Shooter/Shooter/bin/Debug/Content/Animation/LazorBeam.xnb

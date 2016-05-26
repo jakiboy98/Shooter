@@ -54,6 +54,7 @@
     <Compile Include="ParallaxingBackground.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Projectile.cs" />
+    <Compile Include="LazorBeam.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
